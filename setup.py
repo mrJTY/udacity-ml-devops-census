@@ -1,8 +1,8 @@
 import setuptools
 
 setuptools.setup(
-    name="starter",
+    name="census_ml",
     version="0.0.0",
-    description="Starter code.",
-    author="Student",
+    description="An ML project that predicts salary given demographic data by using census information.",
+    author="mrJTY",
 )
