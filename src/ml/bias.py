@@ -3,7 +3,6 @@ Bias analysis utilities using Aequitas for fairness evaluation.
 """
 import os
 import pandas as pd
-import numpy as np
 from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.fairness import Fairness
