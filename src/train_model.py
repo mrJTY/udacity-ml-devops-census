@@ -5,14 +5,19 @@ import pandas as pd
 import pickle
 from ml.data import process_data
 from ml.model import train_model, compute_model_metrics, inference
+from ml.transformations import transform_census_data_to_snake_case
 
 CENSUS_FILE = "data/census.csv"
 
 def main():
     data = pd.read_csv(CENSUS_FILE, skipinitialspace=True)
 
-    # Optional enhancement, use K-fold cross validation instead of a train-test split.
-    train, test = train_test_split(data, test_size=0.20)
+    # Transform data to snake_case format
+    print("Transforming data to snake_case...")
+    data = transform_census_data_to_snake_case(data)
+
+    # TODO: Optional enhancement, use K-fold cross validation instead of a train-test split.
+    train, test = train_test_split(data, test_size=0.20, random_state=42)
 
     cat_features = [
         "workclass",
