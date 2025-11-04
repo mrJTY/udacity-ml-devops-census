@@ -7,7 +7,6 @@ and understanding model behavior across demographics.
 """
 
 import pandas as pd
-import numpy as np
 from typing import Dict, List, Tuple
 from .model import inference, compute_model_metrics
 from .data import process_data
@@ -160,7 +159,7 @@ def compute_multiple_slice_metrics(
     all_results = {}
 
     for slice_feature in slice_features:
-        print(f"\nComputing metrics for: {slice_feature}")
+        print(f"Computing metrics for: {slice_feature}")
         results_df = compute_slice_metrics(
             model=model,
             data=data,
@@ -177,10 +176,8 @@ def compute_multiple_slice_metrics(
     if output_file:
         with open(output_file, 'w') as f:
             for slice_feature, results_df in all_results.items():
-                f.write(f"Model Performance by {slice_feature.upper()}\n")
-                f.write(f"{'='*70}\n\n")
+                f.write(f"Model Performance by {slice_feature.upper()}")
                 f.write(results_df.to_string(index=False))
-                f.write("\n\n")
-        print(f"\nResults saved to: {output_file}")
+        print(f"Results saved to: {output_file}")
 
     return all_results
