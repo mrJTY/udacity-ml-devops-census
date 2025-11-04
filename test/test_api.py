@@ -51,7 +51,7 @@ def test_post_prediction_below_50k():
         assert response.status_code == 200
         data = response.json()
         assert "predicted_salary" in data
-        assert data["predicted_salary"] in ["<=50K", ">50K"]
+        assert data["predicted_salary"] == "<=50K"
 
 
 def test_post_prediction_above_50k():
@@ -77,7 +77,7 @@ def test_post_prediction_above_50k():
         assert response.status_code == 200
         data = response.json()
         assert "predicted_salary" in data
-        assert data["predicted_salary"] in ["<=50K", ">50K"]
+        assert data["predicted_salary"] == ">50K"
 
 
 class TestRootEndpoints:
@@ -129,7 +129,7 @@ class TestPredictEndpoint:
         data = response.json()
         assert "predicted_salary" in data
         assert "prediction_prob" in data
-        assert data["predicted_salary"] in ["<=50K", ">50K"]
+        assert data["predicted_salary"] == "<=50K"
         assert 0.0 <= data["prediction_prob"] <= 1.0
 
     def test_predict_high_income(self, client):
@@ -157,7 +157,7 @@ class TestPredictEndpoint:
         data = response.json()
         assert "predicted_salary" in data
         assert "prediction_prob" in data
-        assert data["predicted_salary"] in ["<=50K", ">50K"]
+        assert data["predicted_salary"]  == ">50K"
         assert 0.0 <= data["prediction_prob"] <= 1.0
 
     def test_predict_with_doctorate(self, client):
@@ -183,7 +183,7 @@ class TestPredictEndpoint:
         assert response.status_code == 200
 
         data = response.json()
-        assert data["predicted_salary"] in ["<=50K", ">50K"]
+        assert data["predicted_salary"] == ">50K"
 
     def test_predict_female_profile(self, client):
         """Test prediction for female profile."""

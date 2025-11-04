@@ -1,6 +1,7 @@
 import pickle
 import pandas as pd
 from pathlib import Path
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 
@@ -8,13 +9,6 @@ from src.model_request import ModelRequest
 from src.model_response import ModelResponse
 from src.ml.data import process_data
 
-
-# Initialize FastAPI app
-app = FastAPI(
-    title="Census Income Prediction API",
-    description="Predicts whether income exceeds $50K/yr based on census data",
-    version="1.0.0"
-)
 
 # Load model artifacts on startup
 MODEL_PATH = Path("model/model.pkl")
@@ -39,11 +33,12 @@ CAT_FEATURES = [
 ]
 
 
-@app.on_event("startup")
-async def load_model():
-    """Load model artifacts on application startup."""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load model artifacts on startup and cleanup on shutdown."""
     global model, encoder, lb
 
+    # Startup: Load model artifacts
     try:
         with open(MODEL_PATH, "rb") as f:
             model = pickle.load(f)
@@ -55,6 +50,20 @@ async def load_model():
     except FileNotFoundError as e:
         print(f"Warning: Could not load model artifacts: {e}")
         print("Run 'python src/train_model.py' to train and save the model")
+
+    yield
+
+    # Shutdown: Cleanup (if needed)
+    print("Shutting down application")
+
+
+# Initialize FastAPI app with lifespan
+app = FastAPI(
+    title="Census Income Prediction API",
+    description="Predicts whether income exceeds $50K/yr based on census data",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 
 @app.get("/")
