@@ -1,0 +1,17 @@
+Model Performance by SEX
+======================================================================
+
+slice_feature slice_value  n_samples  precision   recall       f1
+          sex      Female      10771   0.945148 0.189992 0.316384
+          sex        Male      21790   0.802487 0.493996 0.611540
+
+Model Performance by RACE
+======================================================================
+
+slice_feature        slice_value  n_samples  precision   recall       f1
+         race Amer-Indian-Eskimo        311   0.900000 0.250000 0.391304
+         race Asian-Pac-Islander       1039   0.738220 0.510870 0.603854
+         race              Black       3124   0.827815 0.322997 0.464684
+         race              Other        271   0.666667 0.480000 0.558140
+         race              White      27816   0.813508 0.453562 0.582409
+

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Wrapper script to run bias analysis
 #
 # Usage: ./bin/analyze_bias.sh [options]
