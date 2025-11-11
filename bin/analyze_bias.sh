@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Wrapper script to run bias analysis
+# Wrapper script to run bias analysis in Docker
 #
 # Usage: ./bin/analyze_bias.sh [options]
 #
@@ -14,11 +14,19 @@
 #   ./bin/analyze_bias.sh --attributes race sex education
 #   ./bin/analyze_bias.sh --output-dir custom_output
 
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+set -e
 
-# Get the project root directory (parent of bin)
-PROJECT_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$(dirname "$0")/.."
 
-# Run the Python script from the src directory
-.venv/bin/python src/analyze_bias.py "$@"
+# Build the Docker image
+echo "Building Docker image..."
+docker build -t census-income-api:latest .
+
+# Run bias analysis in Docker
+echo "Running bias analysis in Docker..."
+docker run --rm \
+  -v "$(pwd)/model:/app/model" \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/src:/app/src" \
+  census-income-api:latest \
+  python src/analyze_bias.py "$@"
