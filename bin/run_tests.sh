@@ -15,7 +15,10 @@ docker build -t census-income-api:latest .
 # Run tests in Docker container
 echo "Running tests in Docker..."
 docker run --rm \
+  -e PYTHONPATH=/app \
   -v "$(pwd)/test:/app/test" \
   -v "$(pwd)/src:/app/src" \
+  -v "$(pwd)/model:/app/model" \
+  -v "$(pwd)/data:/app/data" \
   census-income-api:latest \
   pytest test/ "$@"
