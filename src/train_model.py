@@ -16,6 +16,8 @@ def main():
     print("Transforming data to snake_case...")
     data = transform_census_data_to_snake_case(data)
 
+    data = data.drop(columns=['fnlgt'], errors='ignore')
+
     # TODO: Optional enhancement, use K-fold cross validation instead of a train-test split.
     train, test = train_test_split(data, test_size=0.20, random_state=42)
 

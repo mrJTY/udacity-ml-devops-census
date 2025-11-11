@@ -11,7 +11,6 @@ class ModelRequest(BaseModel):
         "state_gov", "self_emp_not_inc", "private", "federal_gov",
         "local_gov", "self_emp_inc", "without_pay", "never_worked"
     ] = Field(..., description="Type of employment")
-    fnlgt: int = Field(..., description="Final sampling weight")
     education: Literal[
         "bachelors", "hs_grad", "11th", "masters", "9th", "some_college",
         "assoc_acdm", "assoc_voc", "7th_8th", "doctorate", "prof_school",
@@ -45,7 +44,6 @@ class ModelRequest(BaseModel):
             "example": {
                 "age": 39,
                 "workclass": "state_gov",
-                "fnlgt": 77516,
                 "education": "bachelors",
                 "education_num": 13,
                 "marital_status": "never_married",
