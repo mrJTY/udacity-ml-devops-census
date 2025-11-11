@@ -4,6 +4,7 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.model_request import ModelRequest
 from src.model_response import ModelResponse
@@ -65,6 +66,15 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 async def root():
@@ -111,7 +121,6 @@ async def predict_income(request: ModelRequest):
         input_data = pd.DataFrame([{
             "age": request.age,
             "workclass": request.workclass,
-            "fnlgt": request.fnlgt,
             "education": request.education,
             "education-num": request.education_num,
             "marital-status": request.marital_status,

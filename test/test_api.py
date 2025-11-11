@@ -34,7 +34,6 @@ def test_post_prediction_below_50k():
         payload = {
             "age": 25,
             "workclass": "private",
-            "fnlgt": 100000,
             "education": "hs_grad",
             "education_num": 9,
             "marital_status": "never_married",
@@ -60,7 +59,6 @@ def test_post_prediction_above_50k():
         payload = {
             "age": 52,
             "workclass": "self_emp_not_inc",
-            "fnlgt": 209642,
             "education": "masters",
             "education_num": 14,
             "marital_status": "married_civ_spouse",
@@ -109,7 +107,6 @@ class TestPredictEndpoint:
         payload = {
             "age": 25,
             "workclass": "private",
-            "fnlgt": 100000,
             "education": "hs_grad",
             "education_num": 9,
             "marital_status": "never_married",
@@ -137,7 +134,6 @@ class TestPredictEndpoint:
         payload = {
             "age": 52,
             "workclass": "self_emp_not_inc",
-            "fnlgt": 209642,
             "education": "hs_grad",
             "education_num": 9,
             "marital_status": "married_civ_spouse",
@@ -165,7 +161,6 @@ class TestPredictEndpoint:
         payload = {
             "age": 42,
             "workclass": "private",
-            "fnlgt": 159449,
             "education": "doctorate",
             "education_num": 16,
             "marital_status": "married_civ_spouse",
@@ -190,7 +185,6 @@ class TestPredictEndpoint:
         payload = {
             "age": 37,
             "workclass": "private",
-            "fnlgt": 284582,
             "education": "masters",
             "education_num": 14,
             "marital_status": "married_civ_spouse",
@@ -231,7 +225,6 @@ class TestPredictValidation:
         payload = {
             "age": 150,  # Invalid age
             "workclass": "private",
-            "fnlgt": 100000,
             "education": "bachelors",
             "education_num": 13,
             "marital_status": "never_married",
@@ -253,7 +246,6 @@ class TestPredictValidation:
         payload = {
             "age": 39,
             "workclass": "InvalidWorkclass",  # Not in allowed values
-            "fnlgt": 100000,
             "education": "bachelors",
             "education_num": 13,
             "marital_status": "never_married",
@@ -275,7 +267,6 @@ class TestPredictValidation:
         payload = {
             "age": 39,
             "workclass": "private",
-            "fnlgt": 100000,
             "education": "bachelors",
             "education_num": 13,
             "marital_status": "never_married",
@@ -301,7 +292,6 @@ class TestPredictResponseFormat:
         payload = {
             "age": 39,
             "workclass": "state_gov",
-            "fnlgt": 77516,
             "education": "bachelors",
             "education_num": 13,
             "marital_status": "never_married",
@@ -335,7 +325,6 @@ class TestPredictResponseFormat:
         payload = {
             "age": 39,
             "workclass": "state_gov",
-            "fnlgt": 77516,
             "education": "bachelors",
             "education_num": 13,
             "marital_status": "never_married",
