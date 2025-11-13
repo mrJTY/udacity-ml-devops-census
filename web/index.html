@@ -354,7 +354,11 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:8000';
+        // Use same origin for API in production, localhost for development
+        const API_BASE = window.location.hostname === 'localhost'
+            ? 'http://localhost:8000'
+            : window.location.origin;
+        const API_URL = API_BASE + '/api';
 
         // Education to years mapping
         const educationToYears = {
