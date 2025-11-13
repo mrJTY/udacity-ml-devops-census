@@ -15,11 +15,13 @@ from src.ml.data import process_data
 MODEL_PATH = Path("model/model.pkl")
 ENCODER_PATH = Path("model/encoder.pkl")
 LB_PATH = Path("model/lb.pkl")
+SCALER_PATH = Path("model/scaler.pkl")
 
 # Global variables for model artifacts
 model = None
 encoder = None
 lb = None
+scaler = None
 
 # Categorical features used in training
 CAT_FEATURES = [
@@ -37,7 +39,7 @@ CAT_FEATURES = [
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load model artifacts on startup and cleanup on shutdown."""
-    global model, encoder, lb
+    global model, encoder, lb, scaler
 
     # Startup: Load model artifacts
     try:
@@ -47,7 +49,14 @@ async def lifespan(app: FastAPI):
             encoder = pickle.load(f)
         with open(LB_PATH, "rb") as f:
             lb = pickle.load(f)
-        print("Model artifacts loaded successfully")
+        # Try to load scaler (may not exist for old models)
+        try:
+            with open(SCALER_PATH, "rb") as f:
+                scaler = pickle.load(f)
+            print("Model artifacts loaded successfully (with scaler)")
+        except FileNotFoundError:
+            scaler = None
+            print("Model artifacts loaded successfully (no scaler - using old model)")
     except FileNotFoundError as e:
         print(f"Warning: Could not load model artifacts: {e}")
         print("Run 'python src/train_model.py' to train and save the model")
@@ -96,7 +105,8 @@ async def health_check():
     model_loaded = model is not None and encoder is not None and lb is not None
     return {
         "status": "healthy" if model_loaded else "degraded",
-        "model_loaded": model_loaded
+        "model_loaded": model_loaded,
+        "has_scaler": scaler is not None
     }
 
 
@@ -135,14 +145,28 @@ async def predict_income(request: ModelRequest):
         }])
 
         # Process data using the same pipeline as training
-        X, _, _, _ = process_data(
-            input_data,
-            categorical_features=CAT_FEATURES,
-            label=None,
-            training=False,
-            encoder=encoder,
-            lb=lb
-        )
+        if scaler is not None:
+            # New model with scaling
+            from src.train_model import process_data_with_scaling
+            X, _, _, _, _ = process_data_with_scaling(
+                input_data,
+                categorical_features=CAT_FEATURES,
+                label=None,
+                training=False,
+                encoder=encoder,
+                lb=lb,
+                scaler=scaler
+            )
+        else:
+            # Old model without scaling
+            X, _, _, _ = process_data(
+                input_data,
+                categorical_features=CAT_FEATURES,
+                label=None,
+                training=False,
+                encoder=encoder,
+                lb=lb
+            )
 
         # Make prediction
         predictions = model.predict(X)

@@ -25,6 +25,7 @@ docker build -t census-income-api:latest .
 # Run bias analysis in Docker
 echo "Running bias analysis in Docker..."
 docker run --rm \
+  -e PYTHONPATH=/app \
   -v "$(pwd)/model:/app/model" \
   -v "$(pwd)/data:/app/data" \
   -v "$(pwd)/src:/app/src" \

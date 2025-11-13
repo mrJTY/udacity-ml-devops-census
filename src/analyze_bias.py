@@ -8,9 +8,9 @@ import pandas as pd
 import pickle
 import argparse
 import os
-from ml.data import process_data
-from ml.model import inference
-from ml.bias import analyze_model_bias, generate_bias_report, save_bias_metrics_csv
+from src.ml.data import process_data
+from src.ml.model import inference
+from src.ml.bias import analyze_model_bias, generate_bias_report, save_bias_metrics_csv
 
 
 def load_model_artifacts(model_dir='model'):
