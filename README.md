@@ -2,6 +2,10 @@
 
 A machine learning web application that predicts whether a person's income exceeds $50K/year based on census data.
 
+# LINKS
+* Github repo: https://github.com/mrJTY/udacity-ml-devops-census
+* Interactive front end, deployed to render: https://udacity-ml-devops-census.onrender.com/
+
 ## Quick Start
 ### 1. Clone & Navigate
 
@@ -92,3 +96,17 @@ A bias analysis can also be run using:
 | `/api/health` | GET | Health check |
 | `/api/predict` | POST | Income prediction |
 | `/api/docs` | GET | Interactive API docs |
+
+## Screenshots
+
+### API docs
+
+http://localhost:8000/api/docs#/
+
+![](./doc/api.png)
+
+### Interactive web app frontend
+
+https://udacity-ml-devops-census.onrender.com/
+
+![](./doc/webapp.png)
