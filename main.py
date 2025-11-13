@@ -3,8 +3,10 @@ import pandas as pd
 from pathlib import Path
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from src.model_request import ModelRequest
 from src.model_response import ModelResponse
@@ -72,34 +74,58 @@ app = FastAPI(
     title="Census Income Prediction API",
     description="Predicts whether income exceeds $50K/yr based on census data",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json"
 )
 
-# Add CORS middleware to allow frontend requests
+# Add CORS middleware
+# In production, frontend is served from same origin, so CORS isn't needed for it
+# But we configure it for local development and any authorized external clients
+import os
+
+allowed_origins = [
+    "http://localhost:8000",      # Production (same origin)
+    "http://localhost:3000",      # Local dev (separate frontend server)
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:3000",
+]
+
+# Add production domain if set
+production_url = os.getenv("RENDER_EXTERNAL_URL")
+if production_url:
+    allowed_origins.append(production_url)
+    allowed_origins.append(production_url.replace("http://", "https://"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
+# Create API router
+api_router = APIRouter(prefix="/api")
 
-@app.get("/")
-async def root():
-    """Root endpoint with API information."""
+
+@api_router.get("/")
+async def api_root():
+    """API root endpoint with information."""
     return {
         "message": "Census Income Prediction API",
+        "version": "1.0.0",
         "endpoints": {
-            "/": "API information",
-            "/predict": "POST - Make income predictions",
-            "/health": "GET - Health check",
-            "/docs": "API documentation"
+            "/api/": "API information",
+            "/api/predict": "POST - Make income predictions",
+            "/api/health": "GET - Health check",
+            "/api/docs": "API documentation"
         }
     }
 
 
-@app.get("/health")
+@api_router.get("/health")
 async def health_check():
     """Health check endpoint."""
     model_loaded = model is not None and encoder is not None and lb is not None
@@ -110,7 +136,7 @@ async def health_check():
     }
 
 
-@app.post("/predict", response_model=ModelResponse)
+@api_router.post("/predict", response_model=ModelResponse)
 async def predict_income(request: ModelRequest):
     """
     Predict income category based on census features.
@@ -189,3 +215,16 @@ async def predict_income(request: ModelRequest):
             status_code=500,
             detail=f"Prediction error: {str(e)}"
         )
+
+
+# Include API router
+app.include_router(api_router)
+
+# Mount static files for frontend
+app.mount("/static", StaticFiles(directory="web"), name="static")
+
+
+@app.get("/")
+async def serve_frontend():
+    """Serve the frontend application."""
+    return FileResponse("web/index.html")

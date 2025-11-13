@@ -19,13 +19,12 @@ def client():
 
 # Top-level test functions for sanity check script
 def test_get_root():
-    """Test GET method on root endpoint - tests status code and response body."""
+    """Test GET method on root endpoint - should serve frontend HTML."""
     with TestClient(app) as client:
         response = client.get("/")
         assert response.status_code == 200
-        data = response.json()
-        assert "message" in data
-        assert "endpoints" in data
+        # Root now serves HTML, not JSON
+        assert "text/html" in response.headers["content-type"]
 
 
 def test_post_prediction_below_50k():
@@ -46,7 +45,7 @@ def test_post_prediction_below_50k():
             "hours_per_week": 20,
             "native_country": "united_states"
         }
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
         data = response.json()
         assert "predicted_salary" in data
@@ -71,7 +70,7 @@ def test_post_prediction_above_50k():
             "hours_per_week": 50,
             "native_country": "united_states"
         }
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
         data = response.json()
         assert "predicted_salary" in data
@@ -81,18 +80,18 @@ def test_post_prediction_above_50k():
 class TestRootEndpoints:
     """Tests for basic API endpoints."""
 
-    def test_get_root(self, client):
-        """Test root endpoint returns API information."""
-        response = client.get("/")
+    def test_get_api_root(self, client):
+        """Test API root endpoint returns API information."""
+        response = client.get("/api/")
         assert response.status_code == 200
         data = response.json()
         assert "message" in data
         assert "endpoints" in data
-        assert "/predict" in data["endpoints"]
+        assert "/api/predict" in data["endpoints"]
 
     def test_health_check(self, client):
         """Test health check endpoint."""
-        response = client.get("/health")
+        response = client.get("/api/health")
         assert response.status_code == 200
         data = response.json()
         assert "status" in data
@@ -120,7 +119,7 @@ class TestPredictEndpoint:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
 
         data = response.json()
@@ -147,7 +146,7 @@ class TestPredictEndpoint:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
 
         data = response.json()
@@ -174,7 +173,7 @@ class TestPredictEndpoint:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
 
         data = response.json()
@@ -198,7 +197,7 @@ class TestPredictEndpoint:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
 
         data = response.json()
@@ -217,7 +216,7 @@ class TestPredictValidation:
             # Missing other required fields
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 422  # Unprocessable Entity
 
     def test_predict_invalid_age(self, client):
@@ -238,7 +237,7 @@ class TestPredictValidation:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 422
 
     def test_predict_invalid_workclass(self, client):
@@ -259,7 +258,7 @@ class TestPredictValidation:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 422
 
     def test_predict_negative_capital_gain(self, client):
@@ -280,7 +279,7 @@ class TestPredictValidation:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 422
 
 
@@ -305,7 +304,7 @@ class TestPredictResponseFormat:
             "native_country": "united_states"
         }
 
-        response = client.post("/predict", json=payload)
+        response = client.post("/api/predict", json=payload)
         assert response.status_code == 200
 
         data = response.json()
@@ -339,8 +338,8 @@ class TestPredictResponseFormat:
         }
 
         # Make two predictions with the same input
-        response1 = client.post("/predict", json=payload)
-        response2 = client.post("/predict", json=payload)
+        response1 = client.post("/api/predict", json=payload)
+        response2 = client.post("/api/predict", json=payload)
 
         assert response1.status_code == 200
         assert response2.status_code == 200
@@ -348,6 +347,7 @@ class TestPredictResponseFormat:
         data1 = response1.json()
         data2 = response2.json()
 
-        # Results should be identical
+        # Results should be identical (or very close for floating point)
         assert data1["predicted_salary"] == data2["predicted_salary"]
-        assert data1["prediction_prob"] == data2["prediction_prob"]
+        # Use approximate equality for floating point values
+        assert abs(data1["prediction_prob"] - data2["prediction_prob"]) < 1e-10
