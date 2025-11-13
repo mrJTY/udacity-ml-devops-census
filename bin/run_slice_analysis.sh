@@ -14,6 +14,7 @@ docker build -t census-income-api:latest .
 # Run slice analysis in Docker
 echo "Running slice analysis in Docker..."
 docker run --rm \
+  -e PYTHONPATH=/app \
   -v "$(pwd)/model:/app/model" \
   -v "$(pwd)/data:/app/data" \
   -v "$(pwd)/src:/app/src" \

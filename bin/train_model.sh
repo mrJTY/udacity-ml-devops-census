@@ -14,6 +14,7 @@ docker build -t census-income-api:latest .
 # Run training in Docker
 echo "Training model in Docker..."
 docker run --rm \
+  -e PYTHONPATH=/app \
   -v "$(pwd)/model:/app/model" \
   -v "$(pwd)/data:/app/data" \
   census-income-api:latest \

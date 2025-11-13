@@ -7,7 +7,7 @@ model performance across different demographic groups.
 
 import pandas as pd
 import pickle
-from ml.slice_metrics import compute_slice_metrics, compute_multiple_slice_metrics, print_slice_metrics
+from src.ml.slice_metrics import compute_slice_metrics, compute_multiple_slice_metrics, print_slice_metrics
 
 CENSUS_FILE = "data/census.csv"
 MODEL_FILE = "model/model.pkl"
@@ -45,7 +45,7 @@ def main():
     with open(LB_FILE, "rb") as f:
         lb = pickle.load(f)
 
-    print(f"\nTotal samples in dataset: {len(data)}")
+    print(f"Total samples in dataset: {len(data)}")
     print(f"Model type: {type(model).__name__}")
 
     ######################################################
