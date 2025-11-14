@@ -103,7 +103,7 @@ A bias analysis can also be run using:
 
 http://localhost:8000/api/docs#/
 
-![](./doc/api.png)
+![](doc/example.png)
 
 ## Interactive web app frontend
 
@@ -113,11 +113,11 @@ https://udacity-ml-devops-census.onrender.com/
 
 ## Continous integrations
 
-Github actions:
+### Github actions:
 ![](./doc/continous_integration_1.png)
 
-Deployment on Render.com:
+### Deployment on Render.com:
 ![](./doc/continous_integration_2.png)
 
-Post request through Python
-![](./doc/query_live.png)
+## Post request through a Python script
+![](doc/live_post.png)
