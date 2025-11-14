@@ -97,16 +97,27 @@ A bias analysis can also be run using:
 | `/api/predict` | POST | Income prediction |
 | `/api/docs` | GET | Interactive API docs |
 
-## Screenshots
+# Screenshots
 
-### API docs
+## API docs
 
 http://localhost:8000/api/docs#/
 
-![](./doc/api.png)
+![](doc/example.png)
 
-### Interactive web app frontend
+## Interactive web app frontend
 
 https://udacity-ml-devops-census.onrender.com/
 
 ![](./doc/webapp.png)
+
+## Continous integrations
+
+### Github actions:
+![](./doc/continous_integration_1.png)
+
+### Deployment on Render.com:
+![](./doc/continous_integration_2.png)
+
+## Post request through a Python script
+![](doc/live_post.png)
